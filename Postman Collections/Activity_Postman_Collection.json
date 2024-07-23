@@ -39,7 +39,8 @@
 			},
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": "http://localhost:8082/activity/getThroughCache/1"
 			},
 			"response": []
 		}
