@@ -30,6 +30,18 @@
 				"url": "http://localhost:8082/activity/getAllGroupActivities/100"
 			},
 			"response": []
+		},
+		{
+			"name": "Get Activites from Cache",
+			"id": "43cfa575-b9e4-41d7-867e-5e0b9235cce7",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
