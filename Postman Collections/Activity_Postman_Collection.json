@@ -43,6 +43,18 @@
 				"url": "http://localhost:8082/activity/getThroughCache/1"
 			},
 			"response": []
+		},
+		{
+			"name": "Evict Cache by GroupId",
+			"id": "4decb12d-6257-4187-ba0b-2a1c7db36cf6",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
