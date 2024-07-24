@@ -20,12 +20,12 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "activity_id")
     private Long activityId;
-    @Column(name = "user_id")
-    private Long userId;
     @Column(name = "group_id")
     private Long groupId;
     @Column(name = "settlement_id")
     private Long settlementId;
+    @Column(name ="expense_id")
+    private Long expenseId;
     @Column(name = "activity_type")
     @Enumerated(EnumType.STRING)
     private ActivityType activityType;
