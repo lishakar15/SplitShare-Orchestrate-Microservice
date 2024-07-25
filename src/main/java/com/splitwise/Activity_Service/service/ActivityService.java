@@ -1,6 +1,8 @@
 package com.splitwise.Activity_Service.service;
 
+import com.google.gson.Gson;
 import com.splitwise.Activity_Service.entity.Activity;
+import com.splitwise.Activity_Service.entity.ChangeLog;
 import com.splitwise.Activity_Service.repository.ActivityRepository;
 import com.splitwise.Activity_Service.repository.ChangeLogRepository;
 import org.slf4j.Logger;
@@ -38,5 +40,34 @@ public class ActivityService {
         List<Long> groupIds = null; //need to get this from User Microservice
         return activityRepository.findByGroupIdIn(groupIds);
 
+    }
+
+    public void saveActivity(String activityMsg) {
+        try
+        {
+            Gson gson = new Gson();
+            Activity activity = gson.fromJson(activityMsg,Activity.class);
+            setChangeLogsToActivity(activity);
+            activityRepository.save(activity);
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("Error occurred while saving Activity "+ex);
+        }
+    }
+
+    private void setChangeLogsToActivity(Activity activity) {
+
+        if(activity != null)
+        {
+            List<ChangeLog> changeLogs = activity.getChangeLogs();
+            if(changeLogs != null && !changeLogs.isEmpty())
+            {
+                for(ChangeLog changeLog : changeLogs)
+                {
+                    changeLog.setActivity(activity);
+                }
+            }
+        }
     }
 }

@@ -33,6 +33,6 @@ public class Activity {
     private String message;
     @Column(name = "create_date")
     private Date createDate;
-    @OneToMany(mappedBy = "activity")
+    @OneToMany(mappedBy = "activity",cascade = CascadeType.ALL)
     private List<ChangeLog> changeLogs;
 }
