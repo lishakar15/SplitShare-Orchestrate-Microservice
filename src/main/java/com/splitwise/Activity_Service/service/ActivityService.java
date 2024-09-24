@@ -1,6 +1,7 @@
 package com.splitwise.Activity_Service.service;
 
 import com.google.gson.Gson;
+import com.splitwise.Activity_Service.constants.StringConstants;
 import com.splitwise.Activity_Service.entity.Activity;
 import com.splitwise.Activity_Service.entity.ChangeLog;
 import com.splitwise.Activity_Service.repository.ActivityRepository;
@@ -77,6 +78,7 @@ public class ActivityService {
     {
         if(activities != null || userNameMap != null)
         {
+            Long loggedInUser =0L;
             for(Activity activity : activities) {
                 String message = activity.getMessage();
                 if (message != null)
@@ -87,7 +89,16 @@ public class ActivityService {
                     while (matcher.find()) {
                         Long userId = Long.parseLong(matcher.group(1));
                         //Todo: Need to check if the userid is equal to logged in user and show "you" instead of name
-                        matcher.appendReplacement(sb, userNameMap.get(userId));
+                        String userName = userNameMap.get(userId);
+                        if(userName == null || userName.length() == 0)
+                        {
+                            userName = StringConstants.UNKNOWN_USER;
+                        }
+                        else if(userId.equals(loggedInUser))
+                        {
+                            userName = StringConstants.YOU;
+                        }
+                        matcher.appendReplacement(sb, userName);
                     }
                     matcher.appendTail(sb);
                     System.out.println(sb.toString());
