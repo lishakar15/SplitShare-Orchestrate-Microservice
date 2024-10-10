@@ -1,15 +1,14 @@
 package com.splitwise.Activity_Service.controller;
 
 import com.splitwise.Activity_Service.entity.Activity;
+import com.splitwise.Activity_Service.model.ActivityMessage;
+import com.splitwise.Activity_Service.model.ActivityRequest;
 import com.splitwise.Activity_Service.service.ActivityService;
 import com.splitwise.Activity_Service.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -55,6 +54,26 @@ public class ActivityController {
         }
         return new ResponseEntity<>(activities,HttpStatus.OK);
     }
+    @PostMapping("/processActivityRequest")
+    public ResponseEntity<?> processActivityRequest(@RequestBody ActivityRequest activityRequest) {
+        if (activityRequest != null) {
+            Activity activity = activityRequest.getActivity();
+            //Save Activities to DB
+            activityService.saveActivity(activity);
+            //Process activity to send to SQS
+            activityService.processEmailRequest(activityRequest);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-
+    @PostMapping("/sendEmail")
+    public void sendEmail(@RequestBody ActivityMessage activityMessage)
+    {
+        try{
+            activityService.sendToSqs(activityMessage);
+        }
+        catch(Exception ex){
+            System.out.println("Error occurred while sending to SQS");
+        }
+    }
 }
