@@ -1,5 +1,6 @@
 package com.splitwise.Activity_Service.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class ChangeLog {
     private String changeMessage;
     @ManyToOne()
     @JoinColumn(name = "activity_id")
+    @JsonIgnore
     private Activity activity;
 
 }
