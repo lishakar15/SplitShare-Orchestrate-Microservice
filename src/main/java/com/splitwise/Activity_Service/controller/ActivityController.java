@@ -4,7 +4,6 @@ import com.splitwise.Activity_Service.entity.Activity;
 import com.splitwise.Activity_Service.model.ActivityMessage;
 import com.splitwise.Activity_Service.model.ActivityRequest;
 import com.splitwise.Activity_Service.service.ActivityService;
-import com.splitwise.Activity_Service.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,6 @@ import java.util.List;
 public class ActivityController {
     @Autowired
     ActivityService activityService;
-    @Autowired
-    CacheService cacheService;
 
     @GetMapping("/getGroupActivities/{groupId}")
     public ResponseEntity<List<Activity>> getGroupActivities(@PathVariable("groupId") Long groupId)
@@ -29,29 +26,31 @@ public class ActivityController {
         }
 
         List<Activity> activities = activityService.getActivitiesByGroupId(groupId);
-        if(activities == null || activities.isEmpty())
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(activities,HttpStatus.OK);
     }
-    @GetMapping("/evictCache/{groupId}")
-    public ResponseEntity<String> evictUserNameCacheByGroupId(@PathVariable("groupId") Long groupId)
-    {
-        cacheService.evictCacheByKey(groupId);
-        return new ResponseEntity<>("Cache invalidated",HttpStatus.OK);
-    }
-    @GetMapping("/getAllGroupActivities/{userId}")
+    @GetMapping("/getUserActivities/{userId}")
     public ResponseEntity<List<Activity>> getAllGroupActivitiesOfUser(@PathVariable("userId") Long userId) {
         if (userId == null)
         {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<Activity> activities = activityService.getAllGroupActivitiesOfUser(userId);
-        if (activities == null || !activities.isEmpty())
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(activities,HttpStatus.OK);
+    }
+    @GetMapping("/getExpenseActivity/{expenseId}")
+    public ResponseEntity<List<Activity>> getActivityByExpenseId(@PathVariable("expenseId") Long expenseId){
+        if(expenseId == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        List<Activity> activities = activityService.getActivitiesByExpenseId(expenseId);
+        return new ResponseEntity<>(activities,HttpStatus.OK);
+    }
+    @GetMapping("/getSettlementActivity/{settlementId}")
+    public ResponseEntity<List<Activity>> getActivityBySettlementId(@PathVariable("settlementId") Long settlementId){
+        if(settlementId == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<Activity> activities = activityService.getActivitiesBySettlementId(settlementId);
         return new ResponseEntity<>(activities,HttpStatus.OK);
     }
     @PostMapping("/processActivityRequest")

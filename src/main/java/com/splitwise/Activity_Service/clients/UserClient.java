@@ -16,4 +16,6 @@ public interface UserClient {
     public Map<Long,String> getUserNameMap(@PathVariable("groupId") Long groupId);
     @PostMapping("user/get-user-email-map")
     public Map<Long,String> getUserEmailMapByUserIds(List<Long> userIds);
+    @GetMapping("/group/get-all-group-map/{userId}")
+    public Map<Long, String> getGroupNameMap(@PathVariable("userId") Long userId);
 }
