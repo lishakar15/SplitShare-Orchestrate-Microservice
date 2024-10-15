@@ -20,16 +20,14 @@ public class SqsClientService {
     @Value("${sqs.queue.url}")
     private String queueUrl;
     private static final Logger LOGGER = LoggerFactory.getLogger(SqsClientService.class);
-    public SendMessageResult sendMessage(ActivityMessage activityMessage) {
+    public SendMessageResult sendMessage(String message) {
 
         SendMessageResult sendMessageResponse = null;
         try {
-            Gson gson = new Gson();
-            String message = gson.toJson(activityMessage);
             SendMessageRequest sendMessageRequest = new SendMessageRequest()
                     .withQueueUrl(queueUrl)
                     .withMessageBody(message);
-            sendMessageResponse = sqsClient.sendMessage(sendMessageRequest);
+           //sendMessageResponse = sqsClient.sendMessage(sendMessageRequest);
 
         } catch (AmazonClientException exception) {
             LOGGER.error("Exception occurred while sending message to SQS "+exception.getMessage());
