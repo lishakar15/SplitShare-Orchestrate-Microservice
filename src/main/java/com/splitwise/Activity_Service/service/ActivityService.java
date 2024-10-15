@@ -1,6 +1,7 @@
 package com.splitwise.Activity_Service.service;
 
 import com.amazonaws.services.sqs.model.SendMessageResult;
+import com.google.gson.Gson;
 import com.splitwise.Activity_Service.clients.UserClient;
 import com.splitwise.Activity_Service.clients.SqsClientService;
 import com.splitwise.Activity_Service.constants.StringConstants;
@@ -126,8 +127,10 @@ public class ActivityService {
                             .subject(getSubjectString(activity.getActivityType()))
                             .body(activity.getMessage())
                             .build();
+                    Gson gson = new Gson();
+                    String activityMessageStr = gson.toJson(activityMessage);
                     //Send message to SQS
-                    SendMessageResult sendMessageResult = sqsClientService.sendMessage(activityMessage);
+                    SendMessageResult sendMessageResult = sqsClientService.sendMessage(activityMessageStr);
                     if (sendMessageResult != null) {
                         LOGGER.info("Message sent Successfully ");
                     } else {
@@ -192,11 +195,16 @@ public class ActivityService {
     }
 
     public void sendToSqs(ActivityMessage activityMessage) {
-        SendMessageResult sendMessageResult = sqsClientService.sendMessage(activityMessage);
-        if (sendMessageResult != null) {
-            LOGGER.info("Message sent Successfully ");
-        } else {
-            LOGGER.error("Error occurred while sending message to SQS ");
+        if(activityMessage != null)
+        {
+            Gson gson = new Gson();
+            SendMessageResult sendMessageResult = sqsClientService.sendMessage(gson.toJson(activityMessage));
+
+            if (sendMessageResult != null) {
+                LOGGER.info("Message sent Successfully ");
+            } else {
+                LOGGER.error("Error occurred while sending message to SQS ");
+            }
         }
     }
 }
