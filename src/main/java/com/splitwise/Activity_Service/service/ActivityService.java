@@ -8,6 +8,7 @@ import com.splitwise.Activity_Service.constants.StringConstants;
 import com.splitwise.Activity_Service.entity.Activity;
 import com.splitwise.Activity_Service.entity.ChangeLog;
 import com.splitwise.Activity_Service.enums.ActivityType;
+import com.splitwise.Activity_Service.model.ActiveGroupModel;
 import com.splitwise.Activity_Service.model.ActivityMessage;
 import com.splitwise.Activity_Service.model.ActivityRequest;
 import com.splitwise.Activity_Service.repository.ActivityRepository;
@@ -68,7 +69,7 @@ public class ActivityService {
         }
     }
 
-    private void setChangeLogsToActivity(Activity activity) {
+    public void setChangeLogsToActivity(Activity activity) {
 
         if (activity != null) {
             List<ChangeLog> changeLogs = activity.getChangeLogs();
@@ -80,6 +81,36 @@ public class ActivityService {
         }
     }
 
+    public String getMostActiveGroupByUserId(Long userId)
+    {
+        String mostActiveGroupName = StringConstants.NONE;
+        //Get all the group of the given user
+        Map<Long, String> groupMap = userClient.getGroupNameMap(userId);
+        if(groupMap != null && !groupMap.isEmpty())
+        {
+            List<Long> groupIdList = groupMap.keySet().stream().toList();
+            //Get all the activities count across groups
+            List<Object []> groupActivitiesCount = activityRepository.getAllGroupActivitiesCount(groupIdList);
+            if(groupActivitiesCount != null)
+            {
+                Object [] initData=  groupActivitiesCount.get(0);
+                ActiveGroupModel mostActiveGroup = ActiveGroupModel.builder()
+                        .groupId((Long) initData[0])
+                        .activityCount((Long)initData[1])
+                        .build();
+                groupActivitiesCount.stream().forEach((a) -> {
+                    if(mostActiveGroup.getActivityCount() < (Long)a[1])
+                    {
+                        mostActiveGroup.setGroupId((Long)a[0]);
+                        mostActiveGroup.setActivityCount((Long)a[1]);
+                    }
+                });
+                //Return the group name which has max activities
+                mostActiveGroupName = groupMap.get(mostActiveGroup.getGroupId());
+            }
+        }
+        return mostActiveGroupName;
+    }
 //    public List<Activity> getActivitiesWithUserName(List<Activity> activities, Map<Long, String> userNameMap) {
 //        if (activities != null || userNameMap != null) {
 //            Long loggedInUser = 0L;
