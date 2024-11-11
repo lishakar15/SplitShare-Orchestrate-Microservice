@@ -53,6 +53,16 @@ public class ActivityController {
         List<Activity> activities = activityService.getActivitiesBySettlementId(settlementId);
         return new ResponseEntity<>(activities,HttpStatus.OK);
     }
+    @GetMapping("/get-most-active-group/{userId}")
+    public ResponseEntity<String> getMostActiveGroup(@PathVariable("userId") Long userId)
+    {
+        if(userId == null)
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        String mostActiveGroup = activityService.getMostActiveGroupByUserId(userId);
+        return new ResponseEntity<>(mostActiveGroup,HttpStatus.OK);
+    }
     @PostMapping("/processActivityRequest")
     public ResponseEntity<?> processActivityRequest(@RequestBody ActivityRequest activityRequest) {
         if (activityRequest != null) {
